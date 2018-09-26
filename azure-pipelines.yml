@@ -4,9 +4,19 @@ queue:
   name: Hosted Ubuntu 1604
 steps:
 - script: docker build -t $(dockerId)/$(dockerImage) .
-- script: |
-    docker login -u $(dockerId).azurecr.io -p $(pswd) $(dockerid).azurecr.io 
-    docker push $(dockerId)/$(dockerImage)
+- task: Docker@1
+  displayName: 'Docker Login'
+  inputs:
+    azureSubscription: AzureDevOps
+    azureContainerRegistry: teamulapacr.azurecr.io
+    command: 'login'
+- task: Docker@1
+  displayName: 'Push an image'
+  inputs:
+    azureSubscription: AzureDevOps
+    azureContainerRegistry: teamulapacr.azurecr.io
+    command: 'Push an image'
+
 
 
 

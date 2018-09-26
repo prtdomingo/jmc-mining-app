@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "WebsiteName": {
+        "value": "jmc-webapp"
+      },
+      "JMC_HostingPlanName": {
+        "value": "teamulap-hplan"
+      },
+      "JMC_HostingPlanSKU": {
+        "value": "Standard"
+      },
+      "JMC_HostingPlanWorkerSize": {
+        "value": "0"
+      },
+      "EnableRules": {
+        "value": false
+      }
+    }
+  }

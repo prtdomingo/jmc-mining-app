@@ -10,6 +10,14 @@ steps:
 
     azureContainerRegistry: teamulapacr.azurecr.io
 
+- task: Docker@1
+  displayName: 'Login'
+  inputs:
+    azureSubscription: AzureDevOps
+
+    azureContainerRegistry: teamulapacr.azurecr.io
+
+    command: 'login'
 
 - task: Docker@1
   displayName: 'Push an image'

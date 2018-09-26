@@ -226,14 +226,6 @@
         },
         "resources": [
           {
-            "apiVersion": "2014-11-01",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites/', parameters('WebSiteName'))]"
-            ],
-            "name": "connectionstrings",
-            "type": "config"
-          },
-          {
             "name": "appsettings",
             "type": "config",
             "apiVersion": "2014-11-01",

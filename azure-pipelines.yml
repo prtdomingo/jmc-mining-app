@@ -15,7 +15,7 @@ steps:
 - task: Docker@1
   displayName: Login
   inputs:
-    azureSubscriptionEndpoint: 'AzureDevOps'
+    azureSubscription: 'AzureDevOps'
     azureContainerRegistry: teamulapacr.azurecr.io
     command: login
 - task: Docker@1

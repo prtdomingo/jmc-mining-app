@@ -6,7 +6,7 @@ steps:
 - task: Docker@1
   displayName: 'Build an image'
   inputs:
-    azureSubscriptionEndpoint: AzureDevOps
+    azureSubscription: AzureDevOps
 
     azureContainerRegistry: teamulapacr.azurecr.io
 
@@ -14,7 +14,7 @@ steps:
 - task: Docker@1
   displayName: 'Push an image'
   inputs:
-    azureSubscriptionEndpoint: AzureDevOps
+    azureSubscription: AzureDevOps
 
     azureContainerRegistry: teamulapacr.azurecr.io
 

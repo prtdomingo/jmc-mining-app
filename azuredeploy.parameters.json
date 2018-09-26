@@ -1,99 +1,62 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "webhooks_jmcwebapp_serviceUri": {
-      "value": null
+      "defaultValue": null,
+      "type": "SecureString"
     },
     "sites_jmc_webapp_name": {
-      "value": null
+      "defaultValue": "jmc-webapp",
+      "type": "String"
     },
     "serverfarms_jmc_plan_name": {
-      "value": null
+      "defaultValue": "jmc-plan",
+      "type": "String"
     },
     "slots_dev_name": {
-      "value": null
+      "defaultValue": "dev",
+      "type": "String"
     },
     "config_web_name": {
-      "value": null
+      "defaultValue": "web",
+      "type": "String"
     },
     "slots_test_name": {
-      "value": null
-    },
-    "virtualNetworks_jmc_dbvnet_name": {
-      "value": null
+      "defaultValue": "test",
+      "type": "String"
     },
     "registries_teamulapacr_name": {
-      "value": null
+      "defaultValue": "teamulapacr",
+      "type": "String"
     },
     "config_web_name_1": {
-      "value": null
-    },
-    "alertrules_CPUHigh_teamulap_hplan_name": {
-      "value": null
+      "defaultValue": "web",
+      "type": "String"
     },
     "config_web_name_2": {
-      "value": null
-    },
-    "alertrules_ServerErrors_jmc_webapp_name": {
-      "value": null
-    },
-    "alertrules_ForbiddenRequests_jmc_webapp_name": {
-      "value": null
-    },
-    "alertrules_LongHttpQueue_teamulap_hplan_name": {
-      "value": null
-    },
-    "deployments_191537969854113_name": {
-      "value": null
-    },
-    "deployments_181537967104865_name": {
-      "value": null
-    },
-    "deployments_171537966063628_name": {
-      "value": null
-    },
-    "deployments_161537965711984_name": {
-      "value": null
-    },
-    "deployments_151537965293502_name": {
-      "value": null
-    },
-    "deployments_141537964558096_name": {
-      "value": null
+      "defaultValue": "web",
+      "type": "String"
     },
     "autoscalesettings_teamulap_hplan_TeamUlap_name": {
-      "value": null
-    },
-    "subnets_default_name": {
-      "value": null
+      "defaultValue": "teamulap-hplan-TeamUlap",
+      "type": "String"
     },
     "webhooks_jmcwebapp_name": {
-      "value": null
+      "defaultValue": "jmcwebapp",
+      "type": "String"
     },
     "hostNameBindings_jmc_webapp.azurewebsites.net_name": {
-      "value": null
+      "defaultValue": "jmc-webapp.azurewebsites.net",
+      "type": "String"
     },
     "hostNameBindings_jmc_webapp_dev.azurewebsites.net_name": {
-      "value": null
+      "defaultValue": "jmc-webapp-dev.azurewebsites.net",
+      "type": "String"
     },
     "hostNameBindings_jmc_webapp_test.azurewebsites.net_name": {
-      "value": null
-    },
-    "alertrules_CPUHigh_teamulap_hplan_resourceUri": {
-      "value": null
-    },
-    "alertrules_LongHttpQueue_teamulap_hplan_resourceUri": {
-      "value": null
-    },
-    "autoscalesettings_teamulap_hplan_TeamUlap_metricResourceUri": {
-      "value": null
-    },
-    "autoscalesettings_teamulap_hplan_TeamUlap_metricResourceUri_1": {
-      "value": null
-    },
-    "autoscalesettings_teamulap_hplan_TeamUlap_targetResourceUri": {
-      "value": null
+      "defaultValue": "jmc-webapp-test.azurewebsites.net",
+      "type": "String"
     }
   }
 }

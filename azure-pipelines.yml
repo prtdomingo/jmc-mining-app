@@ -13,7 +13,6 @@ steps:
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
 
-steps:
 - task: Docker@1
   displayName: 'Build an image'
   inputs:
@@ -21,7 +20,6 @@ steps:
 
     azureContainerRegistry: teamulapacr.azurecr.io
 
-steps:
 - task: Docker@1
   displayName: 'Push an image'
   inputs:

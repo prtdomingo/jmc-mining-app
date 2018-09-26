@@ -3,7 +3,7 @@ resources:
 queue:
   name: Hosted Ubuntu 1604
 steps:
-- script: docker build -t $(dockerId)/$(dockerImage) 
+- script: docker build -t $(dockerId)/$(dockerImage) .
 - script: |
     docker login -u $(dockerId).azurecr.io -p $(pswd) $(dockerid).azurecr.io &&
     docker push $(dockerId).azurecr.io/$(imageName)

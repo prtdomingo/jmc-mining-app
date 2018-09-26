@@ -219,7 +219,7 @@
           "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-StagingInsights'))]"
         ],
         "location": "[resourceGroup().location]",
-        "kind": "app,linux,container",
+        "kind": "app,linux",
         "name": "[parameters('WebSiteName')]",
         "properties": {
           "name": "[parameters('WebsiteName')]",

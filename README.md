@@ -32,3 +32,7 @@ app.put('/records/:id', function(req, res, next){
 ```
 
 This is for simple seed mean app at it basic level for learning.
+
+## Build Status
+
+[![Build Status](https://dev.azure.com/TeamUlap/C4TSUlap/_apis/build/status/prtdomingo.jmc-mining-app)](https://dev.azure.com/TeamUlap/C4TSUlap/_build/latest?definitionId=1)

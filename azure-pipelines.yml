@@ -3,44 +3,5 @@ resources:
 queue:
   name: Hosted Ubuntu 1604
 steps:
-- task: Docker@1
-  displayName: 'Build an image'
-  inputs:
-    azureSubscription: AzureDevOps
-
-    azureContainerRegistry: teamulapacr.azurecr.io
-
-- task: Docker@1
-  displayName: 'Login'
-  inputs:
-    azureSubscription: AzureDevOps
-
-    azureContainerRegistry: teamulapacr.azurecr.io
-
-    command: 'login'
-
-- task: Docker@1
-  displayName: 'Push an image'
-  inputs:
-    azureSubscription: AzureDevOps
-
-    azureContainerRegistry: teamulapacr.azurecr.io
-
-    command: 'Push an image'
-
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)'
-
-    Contents: '**/*.json'
-
-    TargetFolder: '$(build.artifactstagingdirectory)'
-
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-
-
+- script: docker login -u $(dockerId) -p $(pswd) teamulapacr.azurecr.io
 

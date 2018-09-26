@@ -67,7 +67,7 @@
             "apiVersion": "2014-06-01",
             "dependsOn": [ ],
             "tags": {
-                "displayName": "PartsUnlimitedHostingPlan"
+                "displayName": "JMCHostingPlan"
             },
             "properties": {
                 "name": "[parameters('JMC_HostingPlanName')]",
@@ -176,193 +176,175 @@
                 }
             }
         },
-        {
-            "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
-            "type": "Microsoft.Insights/alertrules",
-            "location": "Southeast Asia",
-            "apiVersion": "2014-04-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
-            ],
-            "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-                "displayName": "WebsiteHostingPlanAlertRuleLongHttpQueue"
+      {
+        "apiVersion": "2014-04-01",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
+        ],
+        "location": "Southeast Asia",
+        "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
+        "properties": {
+          "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
+          "description": "[concat('The HTTP queue for the instances of ', parameters('JMC_HostingPlanName'), ' has a large number of pending requests.')]",
+          "isEnabled": "[parameters('EnableRules')]",
+          "condition": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
+            "dataSource": {
+              "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
+              "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
+              "metricName": "HttpQueueLength"
             },
-            "properties": {
-                "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
-                "description": "[concat('The HTTP queue for the instances of ', parameters('JMC_HostingPlanName'), ' has a large number of pending requests.')]",
-                "isEnabled": "[parameters('EnableRules')]",
-                "condition": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
-                        "metricName": "HttpQueueLength"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 100,
-                    "windowSize": "PT5M"
-                },
-                "action": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": [ ]
-                }
-            }
+            "operator": "GreaterThan",
+            "threshold": 100,
+            "windowSize": "PT5M"
+          },
+          "action": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
+            "sendToServiceOwners": true,
+            "customEmails": []
+          }
         },
-        {
-            "name": "[parameters('WebSiteName')]",
-            "type": "Microsoft.Web/sites",
+        "tags": {
+          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
+          "displayName": "WebsiteHostingPlanAlertRuleLongHttpQueue"
+        },
+        "type": "Microsoft.Insights/alertrules"
+      },
+      {
+        "apiVersion": "2014-06-01",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]",
+          "[resourceId('Microsoft.Insights/components', concat(parameters('WebsiteName'), '-Insights'))]",
+          "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-DevInsights'))]",
+          "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-StagingInsights'))]"
+        ],
+        "location": "[resourceGroup().location]",
+        "name": "[parameters('WebSiteName')]",
+        "properties": {
+          "name": "[parameters('WebsiteName')]",
+          "serverFarm": "[parameters('JMC_HostingPlanName')]"
+        },
+        "resources": [
+          {
+            "apiVersion": "2014-11-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]",
-                "[resourceId('Microsoft.Insights/components', concat(parameters('WebsiteName'), '-Insights'))]",
-                "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-DevInsights'))]",
-                "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-StagingInsights'))]"
+              "[resourceId('Microsoft.Web/sites/', parameters('WebSiteName'))]"
             ],
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2014-06-01",
-            "tags": {
-                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-                "displayName": "PartsUnlimitedWebsite"
-            },
+            "name": "connectionstrings",
+            "type": "config"
+          },
+          {
+            "name": "appsettings",
+            "type": "config",
+            "apiVersion": "2014-11-01",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+            ],
             "properties": {
-                "name": "[parameters('WebsiteName')]",
-                "serverFarm": "[parameters('JMC_HostingPlanName')]"
+              "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-Insights')).InstrumentationKey]"
+            }
+          },
+          {
+            "name": "slotconfignames",
+            "type": "config",
+            "apiVersion": "2014-11-01",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+            ],
+            "properties": {
+              "connectionStringNames": [ "DefaultConnectionString" ],
+              "appSettingNames": [ "keys:ApplicationInsights:InstrumentationKey" ]
+            }
+          },
+          {
+            "name": "Dev",
+            "type": "slots",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-11-01",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+            ],
+            "properties": {
             },
             "resources": [
-                {
-                    "name": "connectionstrings",
-                    "type": "config",
-                    "apiVersion": "2014-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites/', parameters('WebSiteName'))]"
-                    ]
-                },
-                {
-                    "name": "appsettings",
-                    "type": "config",
-                    "apiVersion": "2014-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-                    ],
-                    "properties": {
-                        "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-Insights')).InstrumentationKey]"
-                    }
-                },
-                {
-                    "name": "slotconfignames",
-                    "type": "config",
-                    "apiVersion": "2014-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-                    ],
-                    "properties": {
-                        "connectionStringNames": [ "DefaultConnectionString" ],
-                        "appSettingNames": [ "keys:ApplicationInsights:InstrumentationKey" ]
-                    }
-                },
-                {
-                    "name": "Dev",
-                    "type": "slots",
-                    "location": "[resourceGroup().location]",
-                    "apiVersion": "2014-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-                    ],
-                    "properties": {
-                    },
-                    "resources": [
-                        {
-                            "name": "connectionstrings",
-                            "type": "config",
-                            "apiVersion": "2014-11-01",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Dev')]"
-                            ]
-                            
-                        },
-                        {
-                            "name": "appsettings",
-                            "type": "config",
-                            "apiVersion": "2014-11-01",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Dev')]"
-                            ],
-                            "properties": {
-                                "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-DevInsights')).InstrumentationKey]"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "Staging",
-                    "type": "slots",
-                    "location": "[resourceGroup().location]",
-                    "apiVersion": "2014-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-                    ],
-                    "properties": {
-                    },
-                    "resources": [
-                        {
-                            "name": "connectionstrings",
-                            "type": "config",
-                            "apiVersion": "2014-11-01",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Staging')]"
-                            ]
-                            
-                        },
-                        {
-                            "name": "appsettings",
-                            "type": "config",
-                            "apiVersion": "2014-11-01",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Staging')]"
-                            ],
-                            "properties": {
-                                "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-StagingInsights')).InstrumentationKey]"
-                            }
-                        }
-                    ]
+              {
+                "name": "appsettings",
+                "type": "config",
+                "apiVersion": "2014-11-01",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Dev')]"
+                ],
+                "properties": {
+                  "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-DevInsights')).InstrumentationKey]"
                 }
+              }
             ]
-        },
-        {
-            "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
-            "type": "Microsoft.Insights/alertrules",
-            "location": "East US",
-            "apiVersion": "2014-04-01",
+          },
+          {
+            "name": "Staging",
+            "type": "slots",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-11-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
             ],
-            "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]": "Resource",
-                "displayName": "WebsiteAlertRuleServerErrors"
-            },
             "properties": {
-                "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
-                "description": "[concat(parameters('WebsiteName'), ' has some server errors, status code 5xx.')]",
-                "isEnabled": "[parameters('EnableRules')]",
-                "condition": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]",
-                        "metricName": "Http5xx"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 0,
-                    "windowSize": "PT5M"
-                },
-                "action": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": [ ]
+            },
+            "resources": [
+              {
+                "name": "appsettings",
+                "type": "config",
+                "apiVersion": "2014-11-01",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Staging')]"
+                ],
+                "properties": {
+                  "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-StagingInsights')).InstrumentationKey]"
                 }
-            }
+              }
+            ]
+          }
+        ],
+        "tags": {
+          "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
+          "displayName": "JMCWebsite"
         },
+        "type": "Microsoft.Web/sites"
+      },
+      {
+        "apiVersion": "2014-04-01",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+        ],
+        "location": "East US",
+        "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
+        "properties": {
+          "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
+          "description": "[concat(parameters('WebsiteName'), ' has some server errors, status code 5xx.')]",
+          "isEnabled": "[parameters('EnableRules')]",
+          "condition": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
+            "dataSource": {
+              "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
+              "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]",
+              "metricName": "Http5xx"
+            },
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "windowSize": "PT5M"
+          },
+          "action": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
+            "sendToServiceOwners": true,
+            "customEmails": []
+          }
+        },
+        "tags": {
+          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]": "Resource",
+          "displayName": "WebsiteAlertRuleServerErrors"
+        },
+        "type": "Microsoft.Insights/alertrules"
+      },
         {
             "name": "[concat('ForbiddenRequests ', parameters('WebsiteName'))]",
             "type": "Microsoft.Insights/alertrules",
@@ -378,17 +360,17 @@
                 "name": "[concat('ForbiddenRequests ', parameters('WebsiteName'))]",
                 "description": "[concat(parameters('WebsiteName'), ' has some requests that are forbidden, status code 403.')]",
                 "isEnabled": "[parameters('EnableRules')]",
-                "condition": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]",
-                        "metricName": "Http403"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 0,
-                    "windowSize": "PT5M"
+              "condition": {
+                "dataSource": {
+                  "metricName": "Http403",
+                  "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
+                  "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]"
                 },
+                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
+                "operator": "GreaterThan",
+                "threshold": 0,
+                "windowSize": "PT5M"
+              },
                 "action": {
                     "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
                     "sendToServiceOwners": true,

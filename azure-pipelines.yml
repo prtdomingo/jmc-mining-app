@@ -7,8 +7,11 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
-  imageName: 'your-container-image-name:$(build.buildId)'
+  imageName: 'teamulapacr.azurecr.io:$(build.buildId)'
 
 steps:
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
+- script: |
+    docker login -u $(dockerId).azurecr.io -p $(pswd) $(dockerId).azurecr.io
+    docker push $(dockerId).azurecr.io/$(imageName)

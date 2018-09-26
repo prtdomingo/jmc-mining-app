@@ -6,13 +6,7 @@
 pool:
   vmImage: 'Ubuntu 16.04'
 
-variables:
-  imageName: 'c4tschallenge:$(build.buildId)'
-
 steps:
-- script: docker build -f Dockerfile -t $(imageName) .
-  displayName: 'docker build'
-
 - task: Docker@1
   displayName: 'Build an image'
   inputs:
@@ -20,14 +14,6 @@ steps:
 
     azureContainerRegistry: teamulapacr.azurecr.io
 
-- task: Docker@1
-  displayName: 'Push an image'
-  inputs:
-    azureSubscriptionEndpoint: AzureDevOps
-
-    azureContainerRegistry: teamulapacr.azurecr.io
-
-    command: 'Push an image'
 
 
 

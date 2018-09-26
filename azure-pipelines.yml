@@ -12,15 +12,24 @@ variables:
 steps:
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
+
+steps:
 - task: Docker@1
   displayName: 'Build an image'
   inputs:
     azureSubscriptionEndpoint: AzureDevOps
+
     azureContainerRegistry: teamulapacr.azurecr.io
+
+steps:
 - task: Docker@1
   displayName: 'Push an image'
   inputs:
     azureSubscriptionEndpoint: AzureDevOps
+
     azureContainerRegistry: teamulapacr.azurecr.io
+
     command: 'Push an image'
+
+
 

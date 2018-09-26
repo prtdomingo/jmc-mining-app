@@ -7,6 +7,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+- script: docker login -u $(dockerId) -p $(pswd) teamulapacr.azurecr.io
 - task: Docker@1
   displayName: 'Build an image'
   inputs:

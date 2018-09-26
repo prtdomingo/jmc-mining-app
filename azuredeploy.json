@@ -2,11 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "serverfarms_Jmchp_name": {
-        "defaultValue": "jmcweb-plan",
-        "type": "String"
-      },
-        "sites_jmc_webapps_name": {
+        "serverfarms_Jmchp_name": {
+            "defaultValue": "jmc-hostingplan",
+            "type": "String"
+        },
+        "sites_jmc_webapp_name": {
             "defaultValue": "jmc-webapp",
             "type": "String"
         },
@@ -30,15 +30,15 @@
             "defaultValue": "web",
             "type": "String"
         },
-        "hostNameBindings_jmc_webapps.azurewebsites.net_name": {
+        "hostNameBindings_jmc_webapp.azurewebsites.net_name": {
             "defaultValue": "jmc-webapp.azurewebsites.net",
             "type": "String"
         },
-        "hostNameBindings_jmc_webapps_dev.azurewebsites.net_name": {
+        "hostNameBindings_jmc_webapp_dev.azurewebsites.net_name": {
             "defaultValue": "jmc-webapp-dev.azurewebsites.net",
             "type": "String"
         },
-        "hostNameBindings_jmc_webapps_test.azurewebsites.net_name": {
+        "hostNameBindings_jmc_webapp_test.azurewebsites.net_name": {
             "defaultValue": "jmc-webapp-test.azurewebsites.net",
             "type": "String"
         }
@@ -46,7 +46,7 @@
     "variables": {},
     "resources": [
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/serverfarms/Jmchp'.",
+            "comments": "",
             "type": "Microsoft.Web/serverfarms",
             "sku": {
                 "name": "S1",
@@ -73,18 +73,21 @@
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps'.",
+            "comments": "",
             "type": "Microsoft.Web/sites",
             "kind": "app,linux,container",
-            "name": "[parameters('sites_jmc_webapps_name')]",
+            "name": "[parameters('sites_jmc_webapp_name')]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "production"
+            },
             "scale": null,
             "properties": {
                 "enabled": true,
                 "hostNameSslStates": [
                     {
-                        "name": "[concat(parameters('sites_jmc_webapps_name'),'.azurewebsites.net')]",
+                        "name": "[concat(parameters('sites_jmc_webapp_name'),'.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -92,7 +95,7 @@
                         "hostType": "Standard"
                     },
                     {
-                        "name": "[concat(parameters('sites_jmc_webapps_name'),'.scm.azurewebsites.net')]",
+                        "name": "[concat(parameters('sites_jmc_webapp_name'),'.scm.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -117,11 +120,14 @@
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/config/web'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/config",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('config_web_name'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('config_web_name'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "production"
+            },
             "scale": null,
             "properties": {
                 "numberOfWorkers": 1,
@@ -229,38 +235,41 @@
                 "reservedInstanceCount": 0
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/hostNameBindings/jmc-webapps.azurewebsites.net'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/hostNameBindings",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('hostNameBindings_jmc_webapps.azurewebsites.net_name'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('hostNameBindings_jmc_webapp.azurewebsites.net_name'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
             "scale": null,
             "properties": {
-                "siteName": "jmc-webapps",
+                "siteName": "jmc-webapp",
                 "domainId": null,
                 "hostNameType": "Verified"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/slots",
             "kind": "app,linux,container",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Dev_name'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "development"
+            },
             "scale": null,
             "properties": {
                 "enabled": true,
                 "hostNameSslStates": [
                     {
-                        "name": "[concat('jmc-webapps-dev.azurewebsites.net')]",
+                        "name": "[concat('jmc-webapp-dev.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -268,7 +277,7 @@
                         "hostType": "Standard"
                     },
                     {
-                        "name": "[concat('jmc-webapps-dev.scm.azurewebsites.net')]",
+                        "name": "[concat('jmc-webapp-dev.scm.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -289,23 +298,26 @@
                 "cloningInfo": null
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
                 "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/slots",
             "kind": "app,linux,container",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Test_name'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "test"
+            },
             "scale": null,
             "properties": {
                 "enabled": true,
                 "hostNameSslStates": [
                     {
-                        "name": "[concat('jmc-webapps-test.azurewebsites.net')]",
+                        "name": "[concat('jmc-webapp-test.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -313,7 +325,7 @@
                         "hostType": "Standard"
                     },
                     {
-                        "name": "[concat('jmc-webapps-test.scm.azurewebsites.net')]",
+                        "name": "[concat('jmc-webapp-test.scm.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "virtualIP": null,
                         "thumbprint": null,
@@ -334,16 +346,19 @@
                 "cloningInfo": null
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
                 "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev/config/web'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/slots/config",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'), '/', parameters('config_web_name_1'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Dev_name'), '/', parameters('config_web_name_1'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "development"
+            },
             "scale": null,
             "properties": {
                 "numberOfWorkers": 1,
@@ -451,33 +466,36 @@
                 "reservedInstanceCount": 0
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
-                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Dev_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapp_name'), parameters('slots_Dev_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev/hostNameBindings/jmc-webapps-dev.azurewebsites.net'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/slots/hostNameBindings",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'), '/', parameters('hostNameBindings_jmc_webapps_dev.azurewebsites.net_name'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Dev_name'), '/', parameters('hostNameBindings_jmc_webapp_dev.azurewebsites.net_name'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
             "scale": null,
             "properties": {
-                "siteName": "jmc-webapps(Dev)",
+                "siteName": "jmc-webapp(Dev)",
                 "domainId": null,
                 "hostNameType": "Verified"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
-                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Dev_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapp_name'), parameters('slots_Dev_name'))]"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test/config/web'.",
+            "comments": "",
             "type": "Microsoft.Web/sites/slots/config",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'), '/', parameters('config_web_name_2'))]",
+            "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Test_name'), '/', parameters('config_web_name_2'))]",
             "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
+            "tags": {
+                "environment": "test"
+            },
             "scale": null,
             "properties": {
                 "numberOfWorkers": 1,
@@ -585,26 +603,26 @@
                 "reservedInstanceCount": 0
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
-                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Test_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapp_name'), parameters('slots_Test_name'))]"
             ]
         },
-        {
-            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test/hostNameBindings/jmc-webapps-test.azurewebsites.net'.",
-            "type": "Microsoft.Web/sites/slots/hostNameBindings",
-            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'), '/', parameters('hostNameBindings_jmc_webapps_test.azurewebsites.net_name'))]",
-            "apiVersion": "2016-08-01",
-            "location": "Southeast Asia",
-            "scale": null,
-            "properties": {
-                "siteName": "jmc-webapps(Test)",
-                "domainId": null,
-                "hostNameType": "Verified"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
-                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Test_name'))]"
-            ]
-        }
+      {
+        "comments": "",
+        "type": "Microsoft.Web/sites/slots/hostNameBindings",
+        "name": "[concat(parameters('sites_jmc_webapp_name'), '/', parameters('slots_Test_name'), '/', parameters('hostNameBindings_jmc_webapp_test.azurewebsites.net_name'))]",
+        "apiVersion": "2016-08-01",
+        "location": "Southeast Asia",
+        "scale": null,
+        "properties": {
+          "siteName": "jmc-webapp(Test)",
+          "domainId": null,
+          "hostNameType": "Verified"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapp_name'))]",
+          "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapp_name'), parameters('slots_Test_name'))]"
+        ]
+      }
     ]
 }

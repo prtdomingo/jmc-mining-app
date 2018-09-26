@@ -22,20 +22,20 @@
             "type": "bool",
             "defaultValue": false
         }      
-    }
+    },
     "resources": [
-        {
-            "name": "[concat(parameters('WebsiteName'), '-Insights')]",
-            "type": "Microsoft.Insights/components",
-            "location": "southeastasia",
-            "apiVersion": "2014-04-01",
-            "tags": {
-                "displayName": "insightsComponents"
-            },
-            "properties": {
-                "ApplicationId": "[concat(parameters('WebsiteName'), '-Insights')]"
-            }
+      {
+        "apiVersion": "2014-04-01",
+        "location": "southeastasia",
+        "name": "[concat(parameters('WebsiteName'), '-Insights')]",
+        "properties": {
+          "ApplicationId": "[concat(parameters('WebsiteName'), '-Insights')]"
         },
+        "tags": {
+          "displayName": "insightsComponents"
+        },
+        "type": "Microsoft.Insights/components"
+      },
         {
             "name": "[concat(parameters('WebsiteName'), '-DevInsights')]",
             "type": "Microsoft.Insights/components",

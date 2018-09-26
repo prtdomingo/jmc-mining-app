@@ -27,7 +27,7 @@
         {
             "name": "[concat(parameters('WebsiteName'), '-Insights')]",
             "type": "Microsoft.Insights/components",
-            "location": "eastus",
+            "location": "southeastasia",
             "apiVersion": "2014-04-01",
             "tags": {
                 "displayName": "insightsComponents"
@@ -39,7 +39,7 @@
         {
             "name": "[concat(parameters('WebsiteName'), '-DevInsights')]",
             "type": "Microsoft.Insights/components",
-            "location": "eastus",
+            "location": "southeastasia",
             "apiVersion": "2014-04-01",
             "tags": {
                 "displayName": "insightsComponents"
@@ -51,7 +51,7 @@
         {
             "name": "[concat(parameters('WebsiteName'), '-StagingInsights')]",
             "type": "Microsoft.Insights/components",
-            "location": "eastus",
+            "location": "southeastasia",
             "apiVersion": "2014-04-01",
             "tags": {
                 "displayName": "insightsComponents"
@@ -79,7 +79,7 @@
         {
             "name": "[concat(parameters('JMC_HostingPlanName'), '-', resourceGroup().name)]",
             "type": "Microsoft.Insights/autoscalesettings",
-            "location": "East US",
+            "location": "Southeast Asia",
             "apiVersion": "2014-04-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
@@ -145,7 +145,7 @@
         {
             "name": "[concat('CPUHigh ', parameters('JMC_HostingPlanName'))]",
             "type": "Microsoft.Insights/alertrules",
-            "location": "East US",
+            "location": "Southeast Asia",
             "apiVersion": "2014-04-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
@@ -179,7 +179,7 @@
         {
             "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
             "type": "Microsoft.Insights/alertrules",
-            "location": "East US",
+            "location": "Southeast Asia",
             "apiVersion": "2014-04-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
@@ -366,7 +366,7 @@
         {
             "name": "[concat('ForbiddenRequests ', parameters('WebsiteName'))]",
             "type": "Microsoft.Insights/alertrules",
-            "location": "East US",
+            "location": "Southeast Asia",
             "apiVersion": "2014-04-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('WebsiteName'))]"

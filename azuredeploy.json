@@ -69,12 +69,12 @@
             "tags": {
                 "displayName": "JMCHostingPlan"
             },
-            "properties": {
-                "name": "[parameters('JMC_HostingPlanName')]",
-                "sku": "[parameters('JMC_HostingPlanSKU')]",
-                "workerSize": "[parameters('JMC_HostingPlanWorkerSize')]",
-                "numberOfWorkers": 1
-            }
+          "properties": {
+            "name": "[parameters('JMC_HostingPlanName')]",
+            "sku": "[parameters('JMC_HostingPlanSKU')]",
+            "workerSize": "[parameters('JMC_HostingPlanWorkerSize')]",
+            "numberOfWorkers": 1
+          }
         },
         {
             "name": "[concat(parameters('JMC_HostingPlanName'), '-', resourceGroup().name)]",
@@ -219,6 +219,7 @@
           "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-StagingInsights'))]"
         ],
         "location": "[resourceGroup().location]",
+        "kind": "app,linux,container",
         "name": "[parameters('WebSiteName')]",
         "properties": {
           "name": "[parameters('WebsiteName')]",

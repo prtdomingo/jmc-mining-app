@@ -1,21 +1,36 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-      "WebsiteName": {
-        "value": "jmc-webapp"
-      },
-      "JMC_HostingPlanName": {
-        "value": "teamulap-hplan"
-      },
-      "JMC_HostingPlanSKU": {
-        "value": "Standard"
-      },
-      "JMC_HostingPlanWorkerSize": {
-        "value": "0"
-      },
-      "EnableRules": {
-        "value": false
-      }
+  "parameters": {
+    "serverfarms_Jmchp_name": {
+      "value": null
+    },
+    "sites_jmc_webapps_name": {
+      "value": null
+    },
+    "slots_Dev_name": {
+      "value": null
+    },
+    "config_web_name": {
+      "value": null
+    },
+    "slots_Test_name": {
+      "value": null
+    },
+    "config_web_name_1": {
+      "value": null
+    },
+    "config_web_name_2": {
+      "value": null
+    },
+    "hostNameBindings_jmc_webapps.azurewebsites.net_name": {
+      "value": null
+    },
+    "hostNameBindings_jmc_webapps_dev.azurewebsites.net_name": {
+      "value": null
+    },
+    "hostNameBindings_jmc_webapps_test.azurewebsites.net_name": {
+      "value": null
     }
   }
+}

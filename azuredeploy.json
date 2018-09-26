@@ -1,375 +1,610 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "WebsiteName": {
-            "type": "string"
-        },
-        "JMC_HostingPlanName": {
-            "type": "string"
-        },
-        "JMC_HostingPlanSKU": {
-            "type": "string",
-           
-            "defaultValue": "Standard"
-        },
-        "JMC_HostingPlanWorkerSize": {
-            "type": "string",
-           
-            "defaultValue": "0"
-        },
-        "EnableRules": {
-            "type": "bool",
-            "defaultValue": false
-        }      
-    },
-    "resources": [
-      {
-        "apiVersion": "2014-04-01",
-        "location": "southeastasia",
-        "name": "[concat(parameters('WebsiteName'), '-Insights')]",
-        "properties": {
-          "ApplicationId": "[concat(parameters('WebsiteName'), '-Insights')]"
-        },
-        "tags": {
-          "displayName": "insightsComponents"
-        },
-        "type": "Microsoft.Insights/components"
+      "serverfarms_Jmchp_name": {
+        "defaultValue": "jmcweb-plan",
+        "type": "String"
       },
-        {
-            "name": "[concat(parameters('WebsiteName'), '-DevInsights')]",
-            "type": "Microsoft.Insights/components",
-            "location": "southeastasia",
-            "apiVersion": "2014-04-01",
-            "tags": {
-                "displayName": "insightsComponents"
-            },
-            "properties": {
-                "ApplicationId": "[concat(parameters('WebsiteName'), '-DevInsights')]"
-            }
+        "sites_jmc_webapps_name": {
+            "defaultValue": "jmc-webapp",
+            "type": "String"
         },
-        {
-            "name": "[concat(parameters('WebsiteName'), '-StagingInsights')]",
-            "type": "Microsoft.Insights/components",
-            "location": "southeastasia",
-            "apiVersion": "2014-04-01",
-            "tags": {
-                "displayName": "insightsComponents"
-            },
-            "properties": {
-                "ApplicationId": "[concat(parameters('WebsiteName'), '-StagingInsights')]"
-            }
+        "slots_Dev_name": {
+            "defaultValue": "Dev",
+            "type": "String"
         },
+        "config_web_name": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "slots_Test_name": {
+            "defaultValue": "Test",
+            "type": "String"
+        },
+        "config_web_name_1": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "config_web_name_2": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "hostNameBindings_jmc_webapps.azurewebsites.net_name": {
+            "defaultValue": "jmc-webapp.azurewebsites.net",
+            "type": "String"
+        },
+        "hostNameBindings_jmc_webapps_dev.azurewebsites.net_name": {
+            "defaultValue": "jmc-webapp-dev.azurewebsites.net",
+            "type": "String"
+        },
+        "hostNameBindings_jmc_webapps_test.azurewebsites.net_name": {
+            "defaultValue": "jmc-webapp-test.azurewebsites.net",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
         {
-            "name": "[parameters('JMC_HostingPlanName')]",
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/serverfarms/Jmchp'.",
             "type": "Microsoft.Web/serverfarms",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2014-06-01",
-            "dependsOn": [ ],
-            "tags": {
-                "displayName": "JMCHostingPlan"
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S",
+                "capacity": 1
             },
-          "properties": {
-            "name": "[parameters('JMC_HostingPlanName')]",
-            "sku": "[parameters('JMC_HostingPlanSKU')]",
-            "workerSize": "[parameters('JMC_HostingPlanWorkerSize')]",
-            "numberOfWorkers": 1
-          }
+            "kind": "linux",
+            "name": "[parameters('serverfarms_Jmchp_name')]",
+            "apiVersion": "2016-09-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "name": "[parameters('serverfarms_Jmchp_name')]",
+                "workerTierName": null,
+                "adminSiteName": null,
+                "hostingEnvironmentProfile": null,
+                "perSiteScaling": false,
+                "reserved": true,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            },
+            "dependsOn": []
         },
         {
-            "name": "[concat(parameters('JMC_HostingPlanName'), '-', resourceGroup().name)]",
-            "type": "Microsoft.Insights/autoscalesettings",
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "app,linux,container",
+            "name": "[parameters('sites_jmc_webapps_name')]",
+            "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
-            "apiVersion": "2014-04-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
-            ],
-            "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-                "displayName": "WebsiteHostingPlanAutoScale"
-            },
+            "scale": null,
             "properties": {
-                "name": "[concat(parameters('JMC_HostingPlanName'), '-', resourceGroup().name)]",
-                "profiles": [
+                "enabled": true,
+                "hostNameSslStates": [
                     {
-                        "name": "Default",
-                        "capacity": {
-                            "minimum": "1",
-                            "maximum": "4",
-                            "default": "1"
-                        },
-                        "rules": [
-                            {
-                                "metricTrigger": {
-                                    "metricName": "CpuPercentage",
-                                    "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
-                                    "timeGrain": "PT1M",
-                                    "statistic": "Average",
-                                    "timeWindow": "PT10M",
-                                    "timeAggregation": "Average",
-                                    "operator": "GreaterThan",
-                                    "threshold": 80
-                                },
-                                "scaleAction": {
-                                    "direction": "Increase",
-                                    "type": "ChangeCount",
-                                    "value": "1",
-                                    "cooldown": "PT10M"
-                                }
-                            },
-                            {
-                                "metricTrigger": {
-                                    "metricName": "CpuPercentage",
-                                    "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
-                                    "timeGrain": "PT1M",
-                                    "statistic": "Average",
-                                    "timeWindow": "PT1H",
-                                    "timeAggregation": "Average",
-                                    "operator": "LessThan",
-                                    "threshold": 60
-                                },
-                                "scaleAction": {
-                                    "direction": "Decrease",
-                                    "type": "ChangeCount",
-                                    "value": "1",
-                                    "cooldown": "PT1H"
-                                }
-                            }
-                        ]
+                        "name": "[concat(parameters('sites_jmc_webapps_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_jmc_webapps_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
                     }
                 ],
-                "enabled": "[parameters('EnableRules')]",
-                "targetResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]"
-            }
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]",
+                "reserved": true,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]"
+            ]
         },
         {
-            "name": "[concat('CPUHigh ', parameters('JMC_HostingPlanName'))]",
-            "type": "Microsoft.Insights/alertrules",
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('config_web_name'))]",
+            "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
-            "apiVersion": "2014-04-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
-            ],
-            "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-                "displayName": "WebsiteHostingPlanAlertRuleCPUHigh"
-            },
+            "scale": null,
             "properties": {
-                "name": "[concat('CPUHigh ', parameters('JMC_HostingPlanName'))]",
-                "description": "[concat('The average CPU is high across all the instances of ', parameters('JMC_HostingPlanName'))]",
-                "isEnabled": "[parameters('EnableRules')]",
-                "condition": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
-                        "metricName": "CpuPercentage"
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "DOCKER|appsvcsample/static-site",
+                "windowsFxVersion": null,
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": null,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[concat('$jmc-', parameters('config_web_name'),'apps')]",
+                "publishingPassword": null,
+                "appSettings": null,
+                "azureStorageAccounts": {},
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": null,
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "managedServiceIdentityId": null,
+                "xManagedServiceIdentityId": null,
+                "ipSecurityRestrictions": null,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/hostNameBindings/jmc-webapps.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('hostNameBindings_jmc_webapps.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "siteName": "jmc-webapps",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev'.",
+            "type": "Microsoft.Web/sites/slots",
+            "kind": "app,linux,container",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat('jmc-webapps-dev.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
                     },
-                    "operator": "GreaterThan",
-                    "threshold": 90,
-                    "windowSize": "PT15M"
-                },
-                "action": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": [ ]
-                }
-            }
-        },
-      {
-        "apiVersion": "2014-04-01",
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]"
-        ],
-        "location": "Southeast Asia",
-        "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
-        "properties": {
-          "name": "[concat('LongHttpQueue ', parameters('JMC_HostingPlanName'))]",
-          "description": "[concat('The HTTP queue for the instances of ', parameters('JMC_HostingPlanName'), ' has a large number of pending requests.')]",
-          "isEnabled": "[parameters('EnableRules')]",
-          "condition": {
-            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-            "dataSource": {
-              "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-              "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]",
-              "metricName": "HttpQueueLength"
-            },
-            "operator": "GreaterThan",
-            "threshold": 100,
-            "windowSize": "PT5M"
-          },
-          "action": {
-            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-            "sendToServiceOwners": true,
-            "customEmails": []
-          }
-        },
-        "tags": {
-          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-          "displayName": "WebsiteHostingPlanAlertRuleLongHttpQueue"
-        },
-        "type": "Microsoft.Insights/alertrules"
-      },
-      {
-        "apiVersion": "2014-06-01",
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', parameters('JMC_HostingPlanName'))]",
-          "[resourceId('Microsoft.Insights/components', concat(parameters('WebsiteName'), '-Insights'))]",
-          "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-DevInsights'))]",
-          "[resourceId('Microsoft.Insights/components', concat(parameters('WebSiteName'), '-StagingInsights'))]"
-        ],
-        "location": "[resourceGroup().location]",
-        "kind": "app,linux",
-        "name": "[parameters('WebSiteName')]",
-        "properties": {
-          "name": "[parameters('WebsiteName')]",
-          "serverFarm": "[parameters('JMC_HostingPlanName')]"
-        },
-        "resources": [
-          {
-            "name": "appsettings",
-            "type": "config",
-            "apiVersion": "2014-11-01",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-            ],
-            "properties": {
-              "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-Insights')).InstrumentationKey]"
-            }
-          },
-          {
-            "name": "slotconfignames",
-            "type": "config",
-            "apiVersion": "2014-11-01",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-            ],
-            "properties": {
-              "connectionStringNames": [ "DefaultConnectionString" ],
-              "appSettingNames": [ "keys:ApplicationInsights:InstrumentationKey" ]
-            }
-          },
-          {
-            "name": "Dev",
-            "type": "slots",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2014-11-01",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-            ],
-            "properties": {
-            },
-            "resources": [
-              {
-                "name": "appsettings",
-                "type": "config",
-                "apiVersion": "2014-11-01",
-                "dependsOn": [
-                  "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Dev')]"
+                    {
+                        "name": "[concat('jmc-webapps-dev.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
                 ],
-                "properties": {
-                  "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-DevInsights')).InstrumentationKey]"
-                }
-              }
-            ]
-          },
-          {
-            "name": "Staging",
-            "type": "slots",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2014-11-01",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]",
+                "reserved": true,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
             "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-            ],
-            "properties": {
-            },
-            "resources": [
-              {
-                "name": "appsettings",
-                "type": "config",
-                "apiVersion": "2014-11-01",
-                "dependsOn": [
-                  "[resourceId('Microsoft.Web/sites/slots', parameters('WebSiteName'), 'Staging')]"
-                ],
-                "properties": {
-                  "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-StagingInsights')).InstrumentationKey]"
-                }
-              }
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]"
             ]
-          }
-        ],
-        "tags": {
-          "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('JMC_HostingPlanName'))]": "Resource",
-          "displayName": "JMCWebsite"
         },
-        "type": "Microsoft.Web/sites"
-      },
-      {
-        "apiVersion": "2014-04-01",
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
-        ],
-        "location": "East US",
-        "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
-        "properties": {
-          "name": "[concat('ServerErrors ', parameters('WebsiteName'))]",
-          "description": "[concat(parameters('WebsiteName'), ' has some server errors, status code 5xx.')]",
-          "isEnabled": "[parameters('EnableRules')]",
-          "condition": {
-            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-            "dataSource": {
-              "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-              "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]",
-              "metricName": "Http5xx"
-            },
-            "operator": "GreaterThan",
-            "threshold": 0,
-            "windowSize": "PT5M"
-          },
-          "action": {
-            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-            "sendToServiceOwners": true,
-            "customEmails": []
-          }
-        },
-        "tags": {
-          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]": "Resource",
-          "displayName": "WebsiteAlertRuleServerErrors"
-        },
-        "type": "Microsoft.Insights/alertrules"
-      },
         {
-            "name": "[concat('ForbiddenRequests ', parameters('WebsiteName'))]",
-            "type": "Microsoft.Insights/alertrules",
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test'.",
+            "type": "Microsoft.Web/sites/slots",
+            "kind": "app,linux,container",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'))]",
+            "apiVersion": "2016-08-01",
             "location": "Southeast Asia",
-            "apiVersion": "2014-04-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('WebsiteName'))]"
-            ],
-            "tags": {
-                "displayName": "WebsiteAlertRuleForbiddenRequests"
-            },
+            "scale": null,
             "properties": {
-                "name": "[concat('ForbiddenRequests ', parameters('WebsiteName'))]",
-                "description": "[concat(parameters('WebsiteName'), ' has some requests that are forbidden, status code 403.')]",
-                "isEnabled": "[parameters('EnableRules')]",
-              "condition": {
-                "dataSource": {
-                  "metricName": "Http403",
-                  "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource",
-                  "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WebsiteName'))]"
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat('jmc-webapps-test.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat('jmc-webapps-test.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]",
+                "reserved": true,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_Jmchp_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev/config/web'.",
+            "type": "Microsoft.Web/sites/slots/config",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'), '/', parameters('config_web_name_1'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "DOCKER|appsvcsample/static-site",
+                "windowsFxVersion": null,
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2012",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[concat('$jmc-', parameters('config_web_name_1'),'apps__Dev')]",
+                "publishingPassword": null,
+                "appSettings": null,
+                "azureStorageAccounts": {},
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
                 },
-                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition",
-                "operator": "GreaterThan",
-                "threshold": 0,
-                "windowSize": "PT5M"
-              },
-                "action": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": [ ]
-                }
-            }
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": null,
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "managedServiceIdentityId": null,
+                "xManagedServiceIdentityId": null,
+                "ipSecurityRestrictions": null,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Dev_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Dev/hostNameBindings/jmc-webapps-dev.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/slots/hostNameBindings",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Dev_name'), '/', parameters('hostNameBindings_jmc_webapps_dev.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "siteName": "jmc-webapps(Dev)",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Dev_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test/config/web'.",
+            "type": "Microsoft.Web/sites/slots/config",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'), '/', parameters('config_web_name_2'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "DOCKER|appsvcsample/static-site",
+                "windowsFxVersion": null,
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2012",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[concat('$jmc-', parameters('config_web_name_2'),'apps__Test')]",
+                "publishingPassword": null,
+                "appSettings": null,
+                "azureStorageAccounts": {},
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": null,
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "managedServiceIdentityId": null,
+                "xManagedServiceIdentityId": null,
+                "ipSecurityRestrictions": null,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Test_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/b416ef78-aade-4e6c-83fa-a5edd8138303/resourceGroups/jmc-webapps/providers/Microsoft.Web/sites/jmc-webapps/slots/Test/hostNameBindings/jmc-webapps-test.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/slots/hostNameBindings",
+            "name": "[concat(parameters('sites_jmc_webapps_name'), '/', parameters('slots_Test_name'), '/', parameters('hostNameBindings_jmc_webapps_test.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "Southeast Asia",
+            "scale": null,
+            "properties": {
+                "siteName": "jmc-webapps(Test)",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_jmc_webapps_name'))]",
+                "[resourceId('Microsoft.Web/sites/slots', parameters('sites_jmc_webapps_name'), parameters('slots_Test_name'))]"
+            ]
         }
     ]
 }

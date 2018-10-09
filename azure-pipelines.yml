@@ -7,15 +7,11 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
-- task: Docker@1
+- script: docker build -t $(imageName):latest .
   displayName: 'docker build'
-  inputs:
-    azureSubscription: AzureDevOps
-    azureContainerRegistry: $(dockerId).azurecr.io
-    includeLatestTag: true
 - script: |
     docker login $(dockerId).azurecr.io -u $(dockerId) -p $(pswd)
-    docker push $(imageName):$(Build.BuildId)
+    docker push $(imageName):latest
   displayName: 'docker login and push'
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'

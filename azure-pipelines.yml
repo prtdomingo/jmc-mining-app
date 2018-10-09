@@ -7,13 +7,12 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
+- task: Docker@1
   displayName: 'docker build'
   inputs:
     azureSubscription: AzureDevOps
     azureContainerRegistry: $(dockerId).azurecr.io
     includeLatestTag: true
-- script: docker build -t $(imageName):$(Build.BuildId) .
-  displayName: 'docker build'
 - script: |
     docker login $(dockerId).azurecr.io -u $(dockerId) -p $(pswd)
     docker push $(imageName):$(Build.BuildId)

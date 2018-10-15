@@ -36,6 +36,11 @@ var cosmosDbConnectionString = function() {
     return getSecretValue(process.env.COSMOSDB_SECRET_NAME);
 }
 
+var appInsightsKey = function() {
+    return getSecretValue(process.env.APP_INSIGHTS_SECRET);
+}
+
 module.exports = {
-    cosmosDbConnectionString: cosmosDbConnectionString
+    cosmosDbConnectionString: cosmosDbConnectionString,
+    appInsightsKey: appInsightsKey
 };

@@ -5,7 +5,13 @@ var express = require('express'),
     engines = require('consolidate'),
     assert = require('assert'),
     ObjectId = require('mongodb').ObjectID,
-    keyVault = require('./keyvault');
+    keyVault = require('./keyvault'),
+    appInsights = require("applicationinsights");
+
+keyVault.appInsightsKey().then(function (instrumentKey) {    
+    appInsights.setup(instrumentKey);
+    appInsights.start();    
+});
 
 app.use(express.static(__dirname + "/public"));
 

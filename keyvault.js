@@ -40,7 +40,12 @@ var appInsightsKey = function() {
     return getSecretValue(process.env.APP_INSIGHTS_SECRET);
 }
 
+var redisCacheConnectionString = function() {
+    return getSecretValue(process.env.REDIS_CACHE);
+}
+
 module.exports = {
     cosmosDbConnectionString: cosmosDbConnectionString,
-    appInsightsKey: appInsightsKey
+    appInsightsKey: appInsightsKey,
+    redisCacheConnectionString: redisCacheConnectionString
 };

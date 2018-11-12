@@ -22,7 +22,7 @@ function AppCtrl($scope, $http) {
 
     vm.getAllRecords = function() {
         $http.get('/records').then(function(response){
-            vm.records = response.data;
+            vm.records = response.data.data;
         }, function(response){
             vm.handleError(response);
         });

@@ -6,6 +6,7 @@ var express = require('express'),
     assert = require('assert'),
     ObjectId = require('mongodb').ObjectID,
     keyVault = require('./keyvault'),
+    paginate = require('express-paginate'),
     appInsights = require("applicationinsights");
 
 keyVault.appInsightsKey().then(function (instrumentKey) {    
@@ -17,6 +18,13 @@ app.use(express.static(__dirname + "/public"));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(paginate.middleware(10, 50));
+
+app.all(function (req, res, next) {
+    // set default or minimum is 10 (as it was prior to v0.2.0)
+    if (req.query.limit <= 10) req.query.limit = 10;
+    next();
+});
 
 app.engine('html', engines.nunjucks);
 app.set('view engine', 'html');
@@ -35,17 +43,24 @@ keyVault.cosmosDbConnectionString().then(function (result) {
 
         var records_collection = db.collection('records');
 
-        app.get('/records', function (req, res, next) {
-            // console.log("Received get /records request");
-            records_collection.find({}).toArray(function (err, records) {
-                if (err) throw err;
+        app.get('/records', (req, res, next) => {
+            records_collection.count(function (err, totalCount) {
+                records_collection.find({}).limit(req.query.limit).skip(req.skip).toArray(function (err, records) {
+                    if (err) throw err;
 
-                if (records.length < 1) {
-                    console.log("No records found.");
-                }
+                    if (records.length < 1) {
+                        console.log("No records found.");
+                    }
 
-                // console.log(records);
-                res.json(records);
+                    var pageCount = Math.ceil(totalCount / req.query.limit);
+
+                    res.json({
+                        object: 'list',
+                        has_more: paginate.hasNextPages(req)(pageCount),
+                        pages: paginate.getArrayPages(req)(10, pageCount, req.query.page),
+                        data: records
+                    });
+                });
             });
         });
 

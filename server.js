@@ -56,6 +56,7 @@ keyVault.cosmosDbConnectionString().then(function (result) {
 
                     res.json({
                         object: 'list',
+                        currentPage: req.query.page,
                         has_more: paginate.hasNextPages(req)(pageCount),
                         pages: paginate.getArrayPages(req)(10, pageCount, req.query.page),
                         data: records

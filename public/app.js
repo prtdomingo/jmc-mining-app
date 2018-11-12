@@ -15,6 +15,8 @@ function AppCtrl($scope, $http) {
     ];
     vm.record = {};
     vm.records = [];
+    vm.pages = [];
+    vm.currentPage = 1;
 
     vm.handleError = function(response) {
         console.log(response.status + " - " + response.statusText + " - " + response.data);
@@ -23,6 +25,17 @@ function AppCtrl($scope, $http) {
     vm.getAllRecords = function() {
         $http.get('/records').then(function(response){
             vm.records = response.data.data;
+            vm.pages = response.data.pages;
+            vm.currentPage = 1;
+        }, function(response){
+            vm.handleError(response);
+        });
+    }
+
+    vm.getRecord = function(url) {
+        $http.get(url).then(function(response){
+            vm.records = response.data.data;
+            vm.currentPage = response.data.currentPage;
         }, function(response){
             vm.handleError(response);
         });

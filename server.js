@@ -19,7 +19,6 @@ app.use(express.static(__dirname + "/public"));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(paginate.middleware(10, 50));
 
 app.all(function (req, res, next) {
     // set default or minimum is 10 (as it was prior to v0.2.0)

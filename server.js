@@ -69,7 +69,7 @@ keyVault.redisCacheConnectionString().then(function (redisConnection) {
                                 var response = {
                                     object: 'list',
                                     currentPage: req.query.page,
-                                    pages: paginate.getArrayPages(req)(10, pageCount, req.query.page),
+                                    pages: paginate.getArrayPages(req)(10000, pageCount, req.query.page),
                                     data: records
                                 };
 

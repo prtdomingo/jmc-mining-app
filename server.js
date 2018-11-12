@@ -73,7 +73,7 @@ keyVault.redisCacheConnectionString().then(function (redisConnection) {
                                     data: records
                                 };
 
-                                client.set(currentPage, JSON.stringify(response), function() {
+                                client.setex(currentPage, 3600, JSON.stringify(response), function() {
                                     res.json(response);
                                     console.log('set cache');
                                 });

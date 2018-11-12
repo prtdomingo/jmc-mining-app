@@ -12,6 +12,7 @@ steps:
 - script: |
     docker login $(dockerId).azurecr.io -u $(dockerId) -p $(pswd)
     docker push $(imageName):$(Build.BuildId)
+    docker push $(imageName):latest
   displayName: 'docker login and push'
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
